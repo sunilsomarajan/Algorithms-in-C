@@ -17,7 +17,6 @@
 #define R_SIZE 26
 typedef struct Trienode_T {
   struct Trienode_T *next[R_SIZE];
-  char key;
   int end_of_key;
 } trie_node;
 
@@ -32,7 +31,6 @@ trie_node *newTrieNode() {
   if (tr) {
     tr->end_of_key = 0;
     memset(tr->next, 0, sizeof(tr->next));
-    tr->key = '\0';
   }
   return tr;
 }
@@ -119,27 +117,30 @@ int main() {
     printf("creating the 10000 word trie\n");
     printf("............................\n\n");
 
-    char str[50];
-    int mem = 0, i = 1;
+    char str[100];
+    int mem = 0;
     FILE *f = fopen("10000.txt", "r");
     t->root = newTrieNode();
     if (f && t->root) {
-      srand(time(NULL));
       if (f) {
         while (fgets(str, 100, f)) {
           mem += strlen(str);
-          int r = rand() % ((10000 + 1) - 1) + 1;
           trieInsert(t, t->root, str, 0);
         };
       }
       printf(
           "total memory required for building the 10,000 word trie = [%d] bytes\n",
           mem);
-      printf("finding completions for th\n");
-      trieFindPrefixes(t->root, "th");
+
+      printf("enter an autocompletion string\n");
+      scanf(" %s", str);
+      printf("autocompletions for %s\n", str);
+      trieFindPrefixes(t->root, str);
       printf("freeing the 10000 word trie\n");
       printf("...........................\n\n");
       freeTrieNodes(t->root);
+      free(t);
+      fclose(f);
     }
   }
 }
