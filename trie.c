@@ -5,6 +5,10 @@
 #include <string.h>
 #include <time.h>
 
+/** ************************************************************  */
+/** implement a trie data structure for fast word autocompletion  */
+/** ************************************************************  */
+
 #define debug_print(...)                                                       \
   {                                                                            \
     do {                                                                       \
@@ -45,7 +49,7 @@ trie_node *trieInsert(trie *t, trie_node *node, char *key, int len) {
   if (len == strlen(key) - 1) {
     if (node->end_of_key == 0)
       t->number_of_nodes++;
-    // we are done adding the entire string
+    /* we are done adding the entire string */
     node->end_of_key = 1;
     return node;
   }
@@ -128,9 +132,9 @@ int main() {
           trieInsert(t, t->root, str, 0);
         };
       }
-      printf(
-          "total memory required for building the 10,000 word trie = [%d] bytes\n",
-          mem);
+      printf("total memory required for building the 10,000 word trie = [%d] "
+             "bytes\n",
+             mem);
 
       printf("enter an autocompletion string\n");
       scanf(" %s", str);
