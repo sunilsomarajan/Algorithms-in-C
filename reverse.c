@@ -1,6 +1,10 @@
 #include <malloc.h>
 #include <stdio.h>
 
+/** ****************************************************** */
+/** algorithm to reverse a singly linked list iteratively  */
+/** ****************************************************** */
+
 #define LIST_SIZE 10
 typedef struct Node {
   struct Node *next;
