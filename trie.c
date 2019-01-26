@@ -136,7 +136,7 @@ int main() {
              "bytes\n",
              mem);
 
-      printf("enter an autocompletion string\n");
+      printf("enter an autocompletion prefix\n");
       scanf(" %s", str);
       printf("autocompletions for %s\n", str);
       trieFindPrefixes(t->root, str);
