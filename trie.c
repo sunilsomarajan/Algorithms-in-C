@@ -39,6 +39,11 @@ trie_node *newTrieNode() {
   return tr;
 }
 
+/**
+ * Insert a key into the trie. Note that we never store the key itself since
+ * this algorithm only cares about prefix completion. The index of the next
+ * pointer in t->next determines the character that is being referenced
+ */
 trie_node *trieInsert(trie *t, trie_node *node, char *key, int len) {
   if (node == NULL) {
     node = newTrieNode();
