@@ -1,4 +1,4 @@
-# Commonly used algorithms in Computer Science
+# Commonly Used Algorithms in Computer Science
 
 
 [Reverse a Singly Linked List Iteratively](https://github.com/sunilsomarajan/Algorithms-in-C/blob/master/reverse.c)
