@@ -17,6 +17,50 @@
     } while (0);                                                               \
   }
 
+/* By C.B. Falconer.  Public domain 2002-06-22            */
+/*    attribution appreciated.                            */
+
+#define INITSIZE 50 /* power of 2 minus 16, helps malloc */
+#define DELTASIZE (INITSIZE + 16)
+
+enum { OK = 0, NOMEM };
+
+int fggets(char **ln, FILE *f) {
+  int cursize, ch, ix;
+  char *buffer, *temp;
+
+  *ln = NULL; /* default */
+  if (NULL == (buffer = malloc(INITSIZE)))
+    return NOMEM;
+  cursize = INITSIZE;
+
+  ix = 0;
+  while ((EOF != (ch = getc(f))) && ('\n' != ch)) {
+    if (ix >= (cursize - 1)) { /* extend buffer */
+      cursize += DELTASIZE;
+      if (NULL == (temp = realloc(buffer, (size_t)cursize))) {
+        /* ran out of memory, return partial line */
+        buffer[ix] = '\0';
+        *ln = buffer;
+        return NOMEM;
+      }
+      buffer = temp;
+    }
+    buffer[ix++] = ch;
+  }
+  if ((EOF == ch) && (0 == ix)) {
+    free(buffer);
+    return EOF;
+  }
+
+  buffer[ix] = '\0';
+  if (NULL == (temp = realloc(buffer, (size_t)ix + 1))) {
+    *ln = buffer; /* without reducing it */
+  } else
+    *ln = temp;
+  return OK;
+}
+
 /* English alphabet only */
 #define R_SIZE 26
 typedef struct Trienode_T {
@@ -51,6 +95,9 @@ trie_node *trieInsert(trie *t, trie_node *node, char *key, int len) {
       debug_print("Could not create node, abort !\n");
     }
   }
+  /** ignore the new line as fgets includes the newline in the string hence the
+   * strlen needs to be reduced by 1 as seen below
+   */
   if (len == strlen(key) - 1) {
     if (node->end_of_key == 0)
       t->number_of_nodes++;
@@ -132,6 +179,7 @@ int main() {
     t->root = newTrieNode();
     if (f && t->root) {
       if (f) {
+        /* fgets will return a partial line if length > 100 */
         while (fgets(str, 100, f)) {
           mem += strlen(str);
           trieInsert(t, t->root, str, 0);
@@ -141,10 +189,15 @@ int main() {
              "bytes\n",
              mem);
 
-      printf("enter an autocompletion prefix\n");
-      scanf(" %s", str);
-      printf("autocompletions for %s\n", str);
-      trieFindPrefixes(t->root, str);
+      char *prefix;
+      printf("enter an autocompletion prefix (empty string to dump all keys in "
+             "the trie)\n");
+      if (fggets(&prefix, stdin) != NOMEM) {
+        printf("autocompletions for [%s]\n",
+               strlen(prefix) > 1 ? prefix : "empty string");
+        trieFindPrefixes(t->root, prefix);
+        free(prefix);
+      }
       printf("freeing the 10000 word trie\n");
       printf("...........................\n\n");
       freeTrieNodes(t->root);
