@@ -194,7 +194,7 @@ int main() {
              "the trie)\n");
       if (fggets(&prefix, stdin) != NOMEM) {
         printf("autocompletions for [%s]\n",
-               strlen(prefix) > 1 ? prefix : "empty string");
+               strlen(prefix) > 0 ? prefix : "empty string");
         trieFindPrefixes(t->root, prefix);
         free(prefix);
       }
