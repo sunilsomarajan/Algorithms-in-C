@@ -4,17 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "hashmap.h"
 
 /** ************************************************************  */
 /** implement a trie data structure for fast word autocompletion  */
 /** ************************************************************  */
 
-#define debug_print(...)                                                       \
-  {                                                                            \
-    do {                                                                       \
-      printf("[%s:%s %d]", __FILE__, __func__, __LINE__);                      \
-      printf(__VA_ARGS__);                                                     \
-    } while (0);                                                               \
+#define debug_print(...)                                  \
+  {                                                       \
+    do {                                                  \
+      printf("[%s:%s %d]", __FILE__, __func__, __LINE__); \
+      printf(__VA_ARGS__);                                \
+    } while (0);                                          \
   }
 
 /* By C.B. Falconer.  Public domain 2002-06-22            */
@@ -30,8 +31,7 @@ int fggets(char **ln, FILE *f) {
   char *buffer, *temp;
 
   *ln = NULL; /* default */
-  if (NULL == (buffer = malloc(INITSIZE)))
-    return NOMEM;
+  if (NULL == (buffer = malloc(INITSIZE))) return NOMEM;
   cursize = INITSIZE;
 
   ix = 0;
@@ -99,8 +99,7 @@ trie_node *trieInsert(trie *t, trie_node *node, char *key, int len) {
    * strlen needs to be reduced by 1 as seen below
    */
   if (len == strlen(key) - 1) {
-    if (node->end_of_key == 0)
-      t->number_of_nodes++;
+    if (node->end_of_key == 0) t->number_of_nodes++;
     /* we are done adding the entire string */
     node->end_of_key = 1;
     return node;
@@ -175,6 +174,7 @@ int main() {
 
     char str[100];
     int mem = 0;
+    int h = 0;
     FILE *f = fopen("10000.txt", "r");
     t->root = newTrieNode();
     if (f && t->root) {
@@ -185,17 +185,24 @@ int main() {
           trieInsert(t, t->root, str, 0);
         };
       }
-      printf("total memory required for building the 10,000 word trie = [%d] "
-             "bytes\n",
-             mem);
+      printf(
+          "total memory required for building the 10,000 word trie = [%d] "
+          "bytes\n",
+          mem);
 
       char *prefix;
-      printf("enter an autocompletion prefix (empty string to dump all keys in "
-             "the trie)\n");
+      printf(
+          "enter an autocompletion prefix (empty string to dump all keys in "
+          "the trie)\n");
       if (fggets(&prefix, stdin) != NOMEM) {
         printf("autocompletions for [%s]\n",
                strlen(prefix) > 0 ? prefix : "empty string");
+        clock_t start, finish;
+        start = clock();
         trieFindPrefixes(t->root, prefix);
+        finish = clock();
+        printf("time taken for autocompletion %f msecs\n",
+               ((double)(finish - start) / CLOCKS_PER_SEC) * 1000);
         free(prefix);
       }
       printf("freeing the 10000 word trie\n");

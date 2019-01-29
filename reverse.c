@@ -33,16 +33,14 @@ node *createList(int num) {
   int i = 0;
   node *p, *h, *prev;
   h = p = malloc(sizeof(node));
-  if (h == NULL)
-    return h;
+  if (h == NULL) return h;
   p->data = i;
   p->next = NULL;
   printf("HEAD %p\n", p);
   for (i = 1; i < num; i++) {
     prev = p;
     p = (node *)malloc(sizeof(node));
-    if (p == NULL)
-      return h;
+    if (p == NULL) return h;
     p->data = i;
     prev->next = p;
   }
